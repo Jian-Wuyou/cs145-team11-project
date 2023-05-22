@@ -2,13 +2,13 @@ from flask import Blueprint, request
 
 controllers = Blueprint("controllers", __name__)
 
-@controllers.post("/readings")
+@controllers.post("/update_db")
 def post_readings():
     """Receives data from the Arduino"""
     print(request.get_data(as_text=True))
     return '{"success": true}', 200
 
-@controllers.get("/readings")
+@controllers.post("/readings")
 def get_readings():
     """Sends readings in JSON format"""
     return {
