@@ -10,16 +10,25 @@ In Linux, start the virtual environment by running
 ```bash
 source ./venv/bin/activate
 ```
+Or, in Windows, by running
+```bash
+.\venv\Scripts\activate
+```
 
 Next, install the requirements by running
 ```bash
 pip install -r requirements.txt
 ```
 
-To run the program, execute the following command:
+To run the program in Linux, execute the following command:
 ```bash
 uwsgi --ini uwsgi.ini
 ```
+In Windows, execute the following:
+```cmd
+flask --app heatwatch/app run
+```
+Make sure to replace `127.0.0.1` with `localhost` in the browser to avoid CORS issues when testing locally.
 
 ## API endpoints
 
