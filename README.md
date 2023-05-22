@@ -34,14 +34,14 @@ uwsgi --ini uwsgi.ini
 #### JSON body parameters
 | Name | Type | Description |
 |---|---|---|
-| `from`<br>(required) | int | Sends readings made after the epoch time specified (exclusive). |
-| `to`<br>(optional) | int | Sends readings made before the epoch time specified (inclusive). |
+| `from`<br>(required) | int | Sends readings made after the epoch time (in ms) specified (exclusive). |
+| `to`<br>(optional) | int | Sends readings made before the epoch time (in ms) specified (inclusive). |
 
 #### Response fields
 | Name | Type | Description |
 |---|---|---|
-| `last` | int | Epoch time of last reading sent. |
-| `first` | int | Epoch time of first reading sent. |
+| `last` | int | Epoch time (in ms) of last reading sent. |
+| `first` | int | Epoch time (in ms) of first reading sent. |
 | `data` | array | Array of tuples of readings in ascending order of time. |
 | `data[n][0]` | int | Epoch time when reading was recorded. |
 | `data[n][1]` | int | Calculated heat index. |
