@@ -16,11 +16,7 @@ Next, install the requirements by running
 pip install -r requirements.txt
 ```
 
-To run the program, install `uwsgi` on Linux via
-```bash
-apt-get install build-essential python-dev
-```
-then execute the following command:
+To run the program, execute the following command:
 ```bash
 uwsgi --ini uwsgi.ini
 ```
