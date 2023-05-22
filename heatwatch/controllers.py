@@ -7,7 +7,22 @@ controllers = Blueprint("controllers", __name__)
 @controllers.post("/update_db")
 def post_readings():
     """Receives data from the Arduino"""
-    print(request.get_data(as_text=True))
+    print(request.get_data(as_text=True)) # For testing/debugging purposes
+
+    data = request.json
+
+    if "T" not in data or "RH" not in data:
+        return '{"success": false, "error": "Missing temperature/humidity."}', 400
+
+    if "time" not in data or data["time"] == None:
+        data["time"] = round(time() * 1000)
+    
+    if "HI" not in data:
+        # Calculate heat index
+        ...
+    
+    # Upload data to server
+
     return '{"success": true}', 200
 
 @controllers.post("/readings")

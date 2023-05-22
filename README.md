@@ -28,7 +28,10 @@ uwsgi --ini uwsgi.ini
 #### JSON body parameters
 | Name | Type | Description |
 |---|---|---|
-|  |  |  |
+| `time` | int | Epoch time (in ms) when reading was made. If null or unspecified, defaults to server time. |
+| `HI` | int | Calculated heat index. If null or unspecified, is calculated from temperature and relative humidity. |
+| `T`<br>(required) | int | Temperature. |
+| `RH`<br>(required) | int | Relative humidity. |
 ### `POST /readings`
 
 #### JSON body parameters
