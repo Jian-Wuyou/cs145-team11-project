@@ -28,7 +28,6 @@ In Windows, execute the following:
 ```cmd
 flask --app heatwatch/app run
 ```
-Make sure to replace `127.0.0.1` with `localhost` in the browser to avoid CORS issues when testing locally.
 
 ## API endpoints
 
