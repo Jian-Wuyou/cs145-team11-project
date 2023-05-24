@@ -12,8 +12,18 @@ def post_readings():
 
     #req = {"id":int,"time":int,"temperature":int,"humidity":int,"heatIndex":int}
     req = request.json
-    print(request.get_data(as_text=True))
+    print(request.get_data(as_text=True)) # For testing/debugging purposes
 
+    if "T" not in req or "RH" not in req:
+        return '{"success": false, "error": "Missing temperature/humidity."}', 400
+
+    if "time" not in req or req["time"] == None:
+        req["time"] = round(time() * 1000)
+    
+    if "HI" not in req:
+        # Calculate heat index
+        ...
+        
     ## query DB
     try:
         conn = mysql.connect()

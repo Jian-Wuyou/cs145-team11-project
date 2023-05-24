@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, Response
 from .extensions import mysql
 
 from . import init_routes
@@ -15,6 +15,16 @@ app.config['MYSQL_DATABASE_HOST'] = config.MYSQL_DATABASE_HOST
 mysql.init_app(app)
 
 init_routes(app)
+
+@app.after_request
+def add_cors(resp: Response):
+    # Allow all domains for now
+    resp.headers.update({
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS, PUT, DELETE",
+        "Access-Control-Allow-Headers": "Content-Type, Access-Control-Allow-Headers, X-Requested-With"
+    })
+    return resp
 
 if __name__ == "__main__":
     app.run(debug=True)

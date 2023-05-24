@@ -10,15 +10,23 @@ In Linux, start the virtual environment by running
 ```bash
 source ./venv/bin/activate
 ```
+Or, in Windows, by running
+```bash
+.\venv\Scripts\activate
+```
 
 Next, install the requirements by running
 ```bash
 pip install -r requirements.txt
 ```
 
-To run the program, execute the following command:
+To run the program in Linux, execute the following command:
 ```bash
 uwsgi --ini uwsgi.ini
+```
+In Windows, execute the following:
+```cmd
+flask --app heatwatch/app run
 ```
 
 ## API endpoints
@@ -28,7 +36,10 @@ uwsgi --ini uwsgi.ini
 #### JSON body parameters
 | Name | Type | Description |
 |---|---|---|
-|  |  |  |
+| `time` | int | Epoch time (in ms) when reading was made. If null or unspecified, defaults to server time. |
+| `HI` | int | Calculated heat index. If null or unspecified, is calculated from temperature and relative humidity. |
+| `T`<br>(required) | int | Temperature. |
+| `RH`<br>(required) | int | Relative humidity. |
 ### `POST /readings`
 
 #### JSON body parameters
