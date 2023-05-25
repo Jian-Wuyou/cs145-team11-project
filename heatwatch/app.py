@@ -28,5 +28,12 @@ def add_cors(resp: Response):
     })
     return resp
 
+domain = os.getenv("RAILWAY_STATIC_URL", default="localhost")
+domain_url = f"http://{domain}:{port}"
+
+@app.context_processor
+def set_domain():
+    return { "domain" : domain_url }
+
 if __name__ == "__main__":
     app.run(debug=True, port=os.getenv("PORT", default=5000))
