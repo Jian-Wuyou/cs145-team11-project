@@ -1,8 +1,10 @@
-from flask import Flask, Response
-from .extensions import mysql
+import os
 
-from . import init_routes
-from . import config  
+from flask import Flask, Response
+
+from heatwatch.extensions import mysql
+
+from . import config, init_routes
 
 # Flask app
 app = Flask(__name__)
@@ -27,4 +29,4 @@ def add_cors(resp: Response):
     return resp
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=os.getenv("PORT", default=5000))
