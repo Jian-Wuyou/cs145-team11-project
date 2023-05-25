@@ -20,12 +20,8 @@ Next, install the requirements by running
 pip install -r requirements.txt
 ```
 
-To run the program in Linux, execute the following command:
+To run the program, execute the following command:
 ```bash
-uwsgi --ini uwsgi.ini
-```
-In Windows, execute the following:
-```cmd
 flask --app heatwatch/app run
 ```
 
