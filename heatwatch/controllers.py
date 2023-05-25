@@ -54,35 +54,37 @@ def get_readings():
     if "to" not in data:
         data["to"] = round(time() * 1000)
 
-    id, start, end = data["id"], data["from"], data["to"]
+    start, end = data["from"], data["to"]
 
-    ## query DB
-    try:
-        conn = mysql.connect()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
-        sql="SELECT * FROM readings WHERE id = %s AND `time` > %s AND `time` <= %s ORDER BY `time`"
-        args=[id, start, end]
-        cursor.execute(sql,args)
-        rows = cursor.fetchall() # result data
 
-        first, last = 0,0
-        if rows: # if not empty
-            first,last = rows[0]["time"], rows[-1]["time"] # get time of first and last entry
-        res = jsonify({'last':last, 'first':first, 'data': rows}) # return {last, first, data}
+    # ## query DB
+    # try:
+    #     conn = mysql.connect()
+    #     cursor = conn.cursor(pymysql.cursors.DictCursor)
+    #     sql="SELECT * FROM readings WHERE id = %s AND `time` > %s AND `time` <= %s ORDER BY `time`"
+    #     args=[id, start, end]
+    #     cursor.execute(sql,args)
+    #     rows = cursor.fetchall() # result data
+
+    #     first, last = 0,0
+    #     if rows: # if not empty
+    #         first,last = rows[0]["time"], rows[-1]["time"] # get time of first and last entry
+    #     res = jsonify({'last':last, 'first':first, 'data': rows}) # return {last, first, data}
  
-        return res, 200
+    #     return res, 200
     
-    except Exception as e:
-        print(e)
-        return '{"success":false}', 500
+    # except Exception as e:
+    #     print(e)
+    #     return '{"success":false}', 500
 
-    finally:
-        cursor.close() 
-        conn.close()
+    # finally:
+    #     cursor.close() 
+    #     conn.close()
 
     # generate fake data in a separate script
-    """
+
     # Generate fake data for testing
+    data = []
     for t in range(start+1, end+1, 200):
         data.append([t, randint(10, 100), 0, 0])
 
@@ -91,4 +93,3 @@ def get_readings():
         "first" : start+1,
         "last" : t
     }
-    """
