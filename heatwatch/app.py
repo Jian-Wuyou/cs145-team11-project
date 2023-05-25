@@ -30,7 +30,7 @@ def add_cors(resp: Response):
 
 port = os.getenv("PORT", default=5000)
 domain = os.getenv("RAILWAY_STATIC_URL", default="localhost")
-domain_url = f"http://{domain}:{port}"
+domain_url = f"https://{domain}:{port}"
 
 @app.context_processor
 def set_domain():
