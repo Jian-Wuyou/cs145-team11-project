@@ -22,8 +22,6 @@ window.onload = async () => {
         return lo;
     }
 
-    const domain = "http://localhost:29002"
-
     const updateInterval = 5000; // just increase if it's causing lag
     let maxTime = 20; // only keeps readings from the past maxTime seconds
     let readings = []; // array of [time, HI, T, RH] tuples

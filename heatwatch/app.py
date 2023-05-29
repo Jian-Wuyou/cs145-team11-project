@@ -12,6 +12,8 @@ port = os.getenv("FLASK_RUN_PORT") or os.getenv("PORT", 29002)
 domain = os.getenv("RAILWAY_STATIC_URL", "localhost")
 domain_url = f"https://{domain}" if domain != "localhost" else f"http://localhost:{port}"
 
+app.config["DOMAIN"] = domain_url
+
 app.config['MYSQL_DATABASE_USER'] = config.MYSQL_DATABASE_USER
 app.config['MYSQL_DATABASE_PASSWORD'] = config.MYSQL_DATABASE_PASSWORD
 app.config['MYSQL_DATABASE_DB'] = config.MYSQL_DATABASE_DB
