@@ -28,7 +28,7 @@ def post_readings():
     try:
         conn = mysql.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
-        sql = "INSERT INTO readings (id, `time`, temperature, humidity, `heat index`) VALUES (%s,%s,%s,%s,%s)"
+        sql = "INSERT INTO cs145_heatwatch (id, `time`, temperature, humidity, `heat_index`) VALUES (%s,%s,%s,%s,%s)"
         args=[req["id"],req["time"],req["T"],req["RH"],req["HI"]]
         cursor.execute(sql,args)  
         conn.commit()
@@ -61,7 +61,7 @@ def get_readings():
     # try:
     #     conn = mysql.connect()
     #     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    #     sql="SELECT * FROM readings WHERE id = %s AND `time` > %s AND `time` <= %s ORDER BY `time`"
+    #     sql="SELECT * FROM cs145_heatwatch WHERE id = %s AND `time` > %s AND `time` <= %s ORDER BY `time`"
     #     args=[id, start, end]
     #     cursor.execute(sql,args)
     #     rows = cursor.fetchall() # result data
