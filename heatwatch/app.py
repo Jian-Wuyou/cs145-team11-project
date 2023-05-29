@@ -1,3 +1,4 @@
+import os
 from flask import Flask, Response
 from .extensions import mysql
 
@@ -26,5 +27,8 @@ def add_cors(resp: Response):
     })
     return resp
 
+domain = os.getenv("RAILWAY_STATIC_URL", "localhost")
+domain_url = f"http{'s' if domain != 'localhost' else ''}://{domain}"
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run("0.0.0.0", os.getenv("PORT", 5000), debug=True)

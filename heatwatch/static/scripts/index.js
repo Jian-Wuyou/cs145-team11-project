@@ -24,7 +24,7 @@ window.onload = async () => {
 
     const domain = "http://localhost:29002"
 
-    const updateInterval = 1000; // just increase if it's causing lag
+    const updateInterval = 5000; // just increase if it's causing lag
     let maxTime = 20; // only keeps readings from the past maxTime seconds
     let readings = []; // array of [time, HI, T, RH] tuples
     let lastReading = Date.now() - maxTime * 1E3; // time, in milliseconds, of last reading

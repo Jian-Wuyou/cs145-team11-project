@@ -18,12 +18,10 @@ Or, in Windows, by running
 Next, install the requirements by running
 ```bash
 pip install -r requirements.txt
+pip install flask pymysql flask-mysql
 ```
 
-To run the program in Linux, execute the following command:
-```bash
-uwsgi --ini uwsgi.ini
-```
+To run the program in, execute the following command:
 In Windows, execute the following:
 ```cmd
 flask --app heatwatch/app run
