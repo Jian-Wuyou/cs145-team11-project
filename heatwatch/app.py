@@ -24,10 +24,10 @@ init_routes(app)
 
 # Setup database
 db = MySQLdb.connect(
-    host=os.getenv("HOST"),
-    user=os.getenv("USERNAME"),
-    passwd=os.getenv("PASSWORD"),
-    db=os.getenv("DATABASE"),
+    host=os.getenv("DB_HOST"),
+    user=os.getenv("DB_USERNAME"),
+    passwd=os.getenv("DB_PASSWORD"),
+    db=os.getenv("DB_DATABASE"),
     autocommit=True,
     # ssl_mode="VERIFY_IDENTITY",
     # ssl={
