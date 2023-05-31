@@ -1,21 +1,16 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <title>CS 145 Team 11 | {% block title %}{% endblock %}</title>
+        {% block head %} {% endblock %}
+    </head>
 
-<head>
-    <title>CS 145 Team 11 | {% block title %}{% endblock %}</title>
-    {% block head %}
-    {% endblock %}
-</head>
+    <body>
+        {% block body %} {% endblock %}
 
-<body>
-    {% block body %}
-    {% endblock %}
-
-    <script>
-        const domain = "{{ domain }}";
-    </script>
-    {% block scripts %}
-    {% endblock %}
-</body>
-
+        <script>
+            const domain = "{{ config['domain'] }}";
+        </script>
+        {% block scripts %} {% endblock %}
+    </body>
 </html>

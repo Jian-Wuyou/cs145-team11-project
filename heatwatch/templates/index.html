@@ -7,9 +7,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-const domain = {{ domain }};
-</script>
 <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
 <script defer src="{{ url_for('static', filename='scripts/index.js') }}"></script>
 {% endblock %}
