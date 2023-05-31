@@ -1,28 +1,42 @@
 import os
+
+import MySQLdb
+from dotenv import load_dotenv
 from flask import Flask, Response
-from .extensions import mysql
 
-from . import init_routes
-from . import config  
+from heatwatch import init_routes
+from heatwatch.database import Database
 
-# Flask app
+load_dotenv()
+
+# Create Flask app
 app = Flask(__name__)
 
+# Check domain
 port = os.getenv("FLASK_RUN_PORT") or os.getenv("PORT", 29002)
 domain = os.getenv("RAILWAY_STATIC_URL", "localhost")
 domain_url = f"https://{domain}" if domain != "localhost" else f"http://localhost:{port}"
 
 app.config["DOMAIN"] = domain_url
 
-app.config['MYSQL_DATABASE_USER'] = config.MYSQL_DATABASE_USER
-app.config['MYSQL_DATABASE_PASSWORD'] = config.MYSQL_DATABASE_PASSWORD
-app.config['MYSQL_DATABASE_DB'] = config.MYSQL_DATABASE_DB
-app.config['MYSQL_DATABASE_HOST'] = config.MYSQL_DATABASE_HOST
-app.config['MYSQL_DATABASE_PORT'] = config.MYSQL_DATABASE_PORT
-mysql.init_app(app)
-
+# Initialize routes
 init_routes(app)
 
+# Setup database
+db = MySQLdb.connect(
+    host=os.getenv("HOST"),
+    user=os.getenv("USERNAME"),
+    passwd=os.getenv("PASSWORD"),
+    db=os.getenv("DATABASE"),
+    autocommit=True,
+    # ssl_mode="VERIFY_IDENTITY",
+    # ssl={
+    #     "ca": "/etc/ssl/cert.pem"
+    # }
+)
+app.config["DB"] = Database(db)
+
+# Add CORS headers
 @app.after_request
 def add_cors(resp: Response):
     # Allow all domains for now
