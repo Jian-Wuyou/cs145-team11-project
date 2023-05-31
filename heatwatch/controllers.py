@@ -1,94 +1,58 @@
-from time import time
-from random import randint
-from flask import Blueprint, request, jsonify
-import pymysql
-from .extensions import mysql
+from flask import Blueprint, current_app, request
+
+from heatwatch.database import Database
 
 controllers = Blueprint("controllers", __name__)
 
 @controllers.post("/update_db")
 def post_readings():
-    """Receives data from the Arduino"""
-
-    #req = {"id":int,"time":int,"temperature":int,"humidity":int,"heatIndex":int}
-    req = request.json
-    print(request.get_data(as_text=True)) # For testing/debugging purposes
-
-    if "T" not in req or "RH" not in req:
-        return '{"success": false, "error": "Missing temperature/humidity."}', 400
-
-    if "time" not in req or req["time"] == None:
-        req["time"] = round(time() * 1000)
+    """ Receives data from the Arduino
     
-    if "HI" not in req:
-        # Calculate heat index
-        ...
-        
-    ## query DB
+    JSON body parameters:
+    readings        array of ordered tuples
+    readings[n][0]  Time. Uses current server time if null.
+    readings[n][1]  Heat index
+    readings[n][2]  Temperature
+    readings[n][3]  Humidity
+    """
+
+    req = request.json
+    current_app.logger.debug(f'/update_db JSON "{req}"')
+
+    db: Database = current_app.config["DB"]
     try:
-        conn = mysql.connect()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
-        sql = "INSERT INTO cs145_heatwatch (id, `time`, temperature, humidity, `heat_index`) VALUES (%s,%s,%s,%s,%s)"
-        args=[req["id"],req["time"],req["T"],req["RH"],req["HI"]]
-        cursor.execute(sql,args)  
-        conn.commit()
-        return '{"success": true}', 200
-
-    except Exception as e:
-        print(e)
-        return '{"success": false}', 500
-
-    finally:    
-        cursor.close() 
-        conn.close()
+        db.insert(req["readings"])
+    except:
+        return {'success': False}, 400, {'ContentType':'application/json'}
+    return {'success': True}, 200, {'ContentType':'application/json'} 
 
 @controllers.post("/readings")
 def get_readings():
-    """Sends readings in JSON format"""
-    data = request.json
-
-    if "from" not in data:
-        return '{"success": false, "error": "Missing \'from\' parameter."}', 400
-
-    # If `to` is not specified, set it to the current time
-    if "to" not in data:
-        data["to"] = round(time() * 1000)
-
-    start, end = data["from"], data["to"]
-
-    # ## query DB
-    # id = data["id"]
-    # try:
-    #     conn = mysql.connect()
-    #     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    #     sql="SELECT * FROM cs145_heatwatch WHERE id = %s AND `time` > %s AND `time` <= %s ORDER BY `time`"
-    #     args=[id, start, end]
-    #     cursor.execute(sql,args)
-    #     rows = cursor.fetchall() # result data
-
-    #     first, last = 0,0
-    #     if rows: # if not empty
-    #         first,last = rows[0]["time"], rows[-1]["time"] # get time of first and last entry
-    #     res = jsonify({'last':last, 'first':first, 'data': rows}) # return {last, first, data}
- 
-    #     return res, 200
+    """ Retrieve rows from the database wherein the given columns fall
+        within the range [min, max]
     
-    # except Exception as e:
-    #     print(e)
-    #     return '{"success":false}', 500
+    JSON body   will be a dict of dicts wherein each entry is of the form
+                "column": {
+                    "min": ...,
+                    "max": ...
+                }
+    
+    Wherein,
+    column      the name of the column (must be one of "time",
+                "temperature", "humidity", or "heat_index")
+    min         minimum value to include in filtered data. If None and
+                column is "time", only returns up to 100 rows.
+    max         maximum value to include in filtered data. If None and
+                column is "time", only returns up to 100 rows.
 
-    # finally:
-    #     cursor.close() 
-    #     conn.close()
 
-    # generate fake data in a separate script
-    # Generate fake data for testing
-    data = []
-    for t in range(start+1, end+1, 200):
-        data.append([t, randint(10, 100), 0, 0])
+    Response parameters
 
-    return {
-        "data" : data,
-        "first" : start+1,
-        "last" : t
-    }
+    """
+    req = request.json
+    current_app.logger.debug(f'/readings JSON "{req}"') # For testing/debugging purposes
+
+    db: Database = current_app.config["DB"]
+    result = db.filter_by(req)
+    
+    return result, 200, {'ContentType':'application/json'}

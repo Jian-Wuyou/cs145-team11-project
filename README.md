@@ -1,43 +1,62 @@
 # cs145-team11-project
- 
+
 ## Setup
+
 First, create the python virtual environment using the `virtualenv` module.
+
 ```bash
 pip install virtualenv
 python -m venv venv
 ```
+
 In Linux, start the virtual environment by running
+
 ```bash
 source ./venv/bin/activate
 ```
+
 Or, in Windows, by running
+
 ```bash
 .\venv\Scripts\activate
 ```
 
-Next, install the requirements by running
+Next, install the requirements by running either of the following:
+
 ```bash
-pip install -r requirements.txt
-pip install flask pymysql flask-mysql
+sudo apt-get install python3-dev python3.11-dev default-libmysqlclient-dev build-essential # On Linux
+pip install wheel
+pip install flask mysqlclient python-dotenv
 ```
 
-To run the program in, execute the following command:
-In Windows, execute the following:
-```cmd
-flask --app heatwatch/app run
+To run the program in debug mode, execute the following command:
+```bash
+python -m heatwatch.app
 ```
+
+To run it in production mode, execute the following
+```cmd
+FLASK_RUN_PORT=$PORT FLASK_RUN_HOST=0.0.0.0 flask --app heatwatch/app run
+```
+
+## Deployment
+
+The webserver is currently being hosted on railway.app, and the database is hosted on planetscale.
 
 ## API endpoints
 
 ### `POST /update_db`
 
 #### JSON body parameters
+
 | Name | Type | Description |
-|---|---|---|
-| `time` | int | Epoch time (in ms) when reading was made. If null or unspecified, defaults to server time. |
-| `HI` | int | Calculated heat index. If null or unspecified, is calculated from temperature and relative humidity. |
-| `T`<br>(required) | int | Temperature. |
-| `RH`<br>(required) | int | Relative humidity. |
+| --- | --- | --- |
+| `readings`| array | Array of ordered tuples |
+| `readings[n][0]` | int | Epoch time (in ms) when reading was made. If null or unspecified, defaults to server time. |
+| `readings[n][1]` | float | Calculated heat index. If null or unspecified, is calculated from temperature and relative humidity. |
+| `readings[n][2]`<br>(required) | float | Temperature. |
+| `readings[n][3]`<br>(required) | int | Relative humidity. |
+
 ### `POST /readings`
 
 #### JSON body parameters

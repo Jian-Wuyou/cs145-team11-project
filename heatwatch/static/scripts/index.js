@@ -47,7 +47,11 @@ window.onload = async () => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({"from":lastReading})
+            body: JSON.stringify({
+                "time": {
+                    "min": lastReading
+                }
+            })
         });
 
         const response = await fetch(request);
