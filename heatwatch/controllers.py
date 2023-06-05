@@ -55,4 +55,8 @@ def get_readings():
     db: Database = current_app.config["DB"]
     result = db.filter_by(req)
     
-    return result, 200, {'ContentType':'application/json'}
+    return {
+        "last": result[-1][0] if result else None,
+        "first": result[0][0] if result else None,
+        "data": result
+    }, 200, {'ContentType':'application/json'}

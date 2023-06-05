@@ -64,6 +64,9 @@ window.onload = async () => {
             return;
         }
 
+        if (!data.last)
+            return
+
         lastReading = data.last;        // Update lastReading for next fetch request
         readings.push(...data.data);    // Extend readings with newly fetched data
         for(dp of data.data) {          // Extend Heat Index datapoints
