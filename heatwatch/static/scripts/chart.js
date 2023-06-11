@@ -60,7 +60,6 @@ const summaryChart = async function(){
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            "id": 1,
             "time": {
                 "min": cutoff 
             }
@@ -81,15 +80,18 @@ const summaryChart = async function(){
     for(dp of data.data) {          // Extend Heat Index datapoints
         HI_dps_agg.push({
             x: new Date(dp[0]),
-            y: dp[1]
+            y: dp[1],
+            markerSize: 5
         });
         H_dps_agg.push({
             x: new Date(dp[0]),
-            y: dp[3]
+            y: dp[3],
+            markerSize: 5
         });
         T_dps_agg.push({
             x: new Date(dp[0]),
-            y: dp[2]
+            y: dp[2],
+            markerSize: 5,
         });
     }
 
@@ -111,7 +113,6 @@ const updateChart = async function() {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            "id": 1,
             "time": {
                 "min":lastReading 
             }
@@ -137,15 +138,18 @@ const updateChart = async function() {
     for(dp of data.data) {          // Extend Heat Index datapoints
         HI_dps.push({
             x: new Date(dp[0]),
-            y: dp[1]
+            y: dp[1],
+            markerSize: 5
         });
         H_dps.push({
             x: new Date(dp[0]),
-            y: dp[3]
+            y: dp[3],
+            markerSize: 5
         });
         T_dps.push({
             x: new Date(dp[0]),
-            y: dp[2]
+            y: dp[2],
+            markerSize: 5
         });
     }
 

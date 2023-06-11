@@ -9,7 +9,7 @@ class Database:
     def __init__(self, db: Connection):
         self.db: Connection = db
     
-    def filter_by(self, filters: dict[str, dict]):
+    def filter_by(self, filters: dict[str, dict], table):
         """ Retrieve rows from the database wherein the given columns fall
             within the range [min, max]
         
@@ -43,7 +43,7 @@ class Database:
             for op, v in f.items():
                 where.append(f"{col} {ops[op]} {v}")
 
-        query = ("SELECT time, heat_index, temperature, humidity FROM readings"
+        query = (f"SELECT time, heat_index, temperature, humidity FROM {table}"
                 f"{' WHERE ' if len(where) else ''}{' AND '.join(where)}"
                  " ORDER BY time"
                 f"{limit}")
