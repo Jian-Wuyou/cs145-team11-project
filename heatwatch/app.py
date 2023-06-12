@@ -46,5 +46,9 @@ def add_cors(resp: Response):
     })
     return resp
 
+@app.handle_exception
+def handle_exception(e):
+    app.logger.info(str(e))
+
 if __name__ == "__main__":
     app.run("0.0.0.0", port, debug=True)
