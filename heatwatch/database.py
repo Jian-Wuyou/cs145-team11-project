@@ -1,5 +1,6 @@
 from time import time
 
+from typing import Dict, List, Union
 from flask import current_app
 from MySQLdb.connections import Connection
 from MySQLdb.cursors import Cursor
@@ -9,7 +10,7 @@ class Database:
     def __init__(self, db: Connection):
         self.db: Connection = db
     
-    def filter_by(self, filters: dict[str, dict], table):
+    def filter_by(self, filters: Dict[str, dict], table):
         """ Retrieve rows from the database wherein the given columns fall
             within the range [min, max]
         
@@ -55,7 +56,7 @@ class Database:
         return result
 
 
-    def insert(self, rows: list[list[int | float]]):
+    def insert(self, rows: List[List[Union[int, float]]]):
         """Inserts rows into the database
 
         Keyword arguments:
