@@ -29,10 +29,10 @@ db = MySQLdb.connect(
     passwd=os.getenv("DB_PASSWORD"),
     db=os.getenv("DB_DATABASE"),
     autocommit=True,
-    # ssl_mode="VERIFY_IDENTITY",
-    # ssl={
-    #     "ca": "/etc/ssl/cert.pem"
-    # }
+    ssl_mode="VERIFY_IDENTITY",
+    ssl={
+        "ca": "/etc/ssl/certs/ca-certificates.crt"
+    }
 )
 app.config["DB"] = Database(db)
 
