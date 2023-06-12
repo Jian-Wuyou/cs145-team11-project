@@ -2,8 +2,8 @@ from time import time
 
 from typing import Dict, List, Union
 from flask import current_app
-from MySQLdb.connections import Connection
-from MySQLdb.cursors import Cursor
+from mariadb.connections import Connection
+from mariadb.cursors import Cursor
 
 
 class Database:

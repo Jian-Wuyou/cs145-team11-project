@@ -1,6 +1,6 @@
 import os
 
-import MySQLdb
+import mariadb
 from dotenv import load_dotenv
 from flask import Flask, Response
 
@@ -22,18 +22,17 @@ app.config["DOMAIN"] = domain_url
 # Initialize routes
 init_routes(app)
 
-# Setup database
-db = MySQLdb.connect(
+db = mariadb.connect(
     host=os.getenv("DB_HOST"),
     user=os.getenv("DB_USERNAME"),
-    passwd=os.getenv("DB_PASSWORD"),
-    db=os.getenv("DB_DATABASE"),
+    password=os.getenv("DB_PASSWORD"),
+    database=os.getenv("DB_DATABASE"),
     autocommit=True,
-    # ssl_mode="VERIFY_IDENTITY",
-    # ssl={
-    #     "ca": "/etc/ssl/cert.pem"
-    # }
+    ssl_verify_cert=True,
+    ssl=True,
+    ssl_ca="/etc/ssl/certs/ca-certificates.crt"
 )
+
 app.config["DB"] = Database(db)
 
 # Add CORS headers
