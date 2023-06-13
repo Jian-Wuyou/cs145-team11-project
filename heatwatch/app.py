@@ -14,10 +14,6 @@ app = Flask(__name__)
 
 # Check domain
 port = os.getenv("FLASK_RUN_PORT") or os.getenv("PORT", 29002)
-domain = os.getenv("RAILWAY_STATIC_URL", "localhost")
-domain_url = f"https://{domain}" if domain != "localhost" else f"http://localhost:{port}"
-
-app.config["DOMAIN"] = domain_url
 
 # Initialize routes
 init_routes(app)
@@ -45,10 +41,6 @@ def add_cors(resp: Response):
         "Access-Control-Allow-Headers": "Content-Type, Access-Control-Allow-Headers, X-Requested-With"
     })
     return resp
-
-@app.handle_exception
-def handle_exception(e):
-    app.logger.info(str(e))
 
 if __name__ == "__main__":
     app.run("0.0.0.0", port, debug=True)
