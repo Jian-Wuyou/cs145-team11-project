@@ -1,9 +1,8 @@
+#include <HTTPClient.h>
 #include <time.h>
 #include <WiFi.h>
-#include <WiFiClient.h>
-
-const char* ssid = "";       // CHANGE 
-const char* password = "";  // CHANGE
+#include <WiFiMulti.h>
+#include <WiFiClientSecure.h>
 
 // Configuring the clock
 const char* ntpServer[] = {"1.ph.pool.ntp.org",
@@ -13,15 +12,16 @@ const long  gmtOffset_sec = 28800;
 const int   daylightOffset_sec = 0;
 
 // Configuring webserver connection
-const char* webserver = "https://heatwatch.up.railway.app";
-const int MAX_BUF_SIZE = 10;
-int buf_counter = 0;                   // Send data when buf_counter == MAX_BUF_SIZE
-float reading_buffer[MAX_BUF_SIZE][3]; // Heat Index, Temperature, Humidity
-int64_t timestamp_buffer[MAX_BUF_SIZE];  // Time in ms
+String server = "https://heatwatch.up.railway.app";
+const int MAX_BUF_SIZE = 100;
+const int CLR_BUF_SIZE = 10;              // Clear buffer after it exceeds this threshold
+int buf_counter = 0;                      // Send data when buf_counter == MAX_BUF_SIZE
+float reading_buffer[MAX_BUF_SIZE][3];    // Heat Index, Temperature, Humidity
+int64_t timestamp_buffer[MAX_BUF_SIZE];   // Time in ms
 
 // *.up.railway.app certificate
 // Expires on July 15, 2023
-const char* root_ca = "-----BEGIN CERTIFICATE-----\n" \
+const char* root_ca_certificate = "-----BEGIN CERTIFICATE-----\n" \
   "MIIGJTCCBQ2gAwIBAgISA1bZ+5HVcReD2plJVCA7enOoMA0GCSqGSIb3DQEBCwUA\n" \
   "MDIxCzAJBgNVBAYTAlVTMRYwFAYDVQQKEw1MZXQncyBFbmNyeXB0MQswCQYDVQQD\n" \
   "EwJSMzAeFw0yMzA0MTYxNDAwMTVaFw0yMzA3MTUxNDAwMTRaMBsxGTAXBgNVBAMM\n" \
@@ -57,57 +57,92 @@ const char* root_ca = "-----BEGIN CERTIFICATE-----\n" \
   "lLvu59RDzlclbZ8fUDHO81BXNmKliWbD5EuwPsr8MHipAH/zg0/4kXY=\n" \
   "-----END CERTIFICATE-----\n";
 
-WiFiClientSecure client;
+void get_readings();
+void send_readings();
+void set_clock();
+int64_t xx_time_get_time();
+
+WiFiMulti WiFiMulti;
 
 void setup() {
   Serial.begin(115200);
 
+  WiFi.mode(WIFI_STA);
+  WiFiMulti.addAP("AndroidAPC7E8", "1234abcd");
+
   // Connect to WiFi network
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED){
-    delay(1000);
+  while ((WiFiMulti.run() != WL_CONNECTED)) {
     Serial.println("Connecting to WiFi...");
   }
   Serial.println("Connected to WiFi");
 
   // Configure time from NTP servers
-  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer[0], ntpServer[1], ntpServer[2]);
-  Serial.println(xx_time_get_time());
-
+  set_clock();
 }
 
-void loop(){
-  delay(500);
+void loop() {
+  delay(1000);
   get_readings();
 }
 
 void get_readings() {
+  if(buf_counter >= MAX_BUF_SIZE) {
+    Serial.println("Buffer full, cannot upload new data to server.");
+    return;
+  }
+
   timestamp_buffer[buf_counter] = xx_time_get_time();
 
   // TODO: replace with sensor readings
-  reading_buffer[buf_counter][0] = 0;
-  reading_buffer[buf_counter][1] = 0;
-  reading_buffer[buf_counter][2] = 0;
+  reading_buffer[buf_counter][0] = 10;
+  reading_buffer[buf_counter][1] = 12;
+  reading_buffer[buf_counter][2] = 14;
   buf_counter++;
 
-  if(buf_counter == MAX_BUF_SIZE) {
+  if(buf_counter >= CLR_BUF_SIZE) {
     send_readings();
   }
 }
 
 void send_readings() {
-  String json = "{ \"readings\": [";
-  char temp[500];
-  for(int i = 0; i < buf_counter; i++) {
-    sprintf(temp, "[%lld, %.3f, %.3f, %.3f]%c",
-            timestamp_buffer[i], reading_buffer[i][0], reading_buffer[i][1], reading_buffer[i][2], i + 1 == buf_counter ? ']' : ',');
-    json += temp;
+  WiFiClientSecure *client = new WiFiClientSecure;
+  if(!client) {
+    Serial.println("Unable to create client");
+    return;
   }
+  client->setCACert(root_ca_certificate);
+
+  String json = "{ \"readings\": [";
+  char temp[4096];
+  for(int i = 0, n = 0; i < buf_counter; i++) {
+    n = sprintf(temp + n, "[%lld, %.3f, %.3f, %.3f]%c",
+      timestamp_buffer[i], reading_buffer[i][0], reading_buffer[i][1], reading_buffer[i][2], i + 1 == buf_counter ? ']' : ',');
+  }
+  json += temp;
   json += "}";
-  buf_counter = 0;
   Serial.println(json);
 
-  // TODO: send json to server
+  {
+    HTTPClient https;
+    Serial.print("[HTTPS] begin...\n");
+    if(https.begin(*client, server + "/update_db")) {
+      Serial.print("[HTTPS] POST...\n");
+      int http_code = https.POST(json);
+
+      if(http_code > 0) {
+        Serial.printf("[HTTPS] POST... code: %d\n", http_code);
+      } else {
+        Serial.printf("[HTTPS] GET... failed, error: %s\n", https.errorToString(http_code).c_str());
+      }
+      https.end();
+    } else {
+      Serial.printf("[HTTPS] Unable to connect\n");
+    }
+  }
+
+  delete client;
+
+  buf_counter = 0;
 }
 
 // Gets time in milliseconds
@@ -115,4 +150,23 @@ int64_t xx_time_get_time() {
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
 	return (tv.tv_sec * 1000LL + (tv.tv_usec / 1000LL));
+}
+
+void set_clock() {
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer[0], ntpServer[1], ntpServer[2]);
+
+  Serial.print(F("Waiting for NTP time sync: "));
+  time_t nowSecs = time(nullptr);
+  while (nowSecs < 8 * 3600 * 2) {
+    delay(500);
+    Serial.print(F("."));
+    yield();
+    nowSecs = time(nullptr);
+  }
+
+  Serial.println();
+  struct tm timeinfo;
+  gmtime_r(&nowSecs, &timeinfo);
+  Serial.print(F("Current time: "));
+  Serial.print(asctime(&timeinfo));
 }
