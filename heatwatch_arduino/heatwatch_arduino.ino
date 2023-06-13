@@ -16,8 +16,8 @@ String server = "https://heatwatch.up.railway.app";
 const int MAX_BUF_SIZE = 100;
 const int CLR_BUF_SIZE = 10;              // Clear buffer after it exceeds this threshold
 int buf_counter = 0;                      // Send data when buf_counter == MAX_BUF_SIZE
-float reading_buffer[MAX_BUF_SIZE][3];    // Heat Index, Temperature, Humidity
-int64_t timestamp_buffer[MAX_BUF_SIZE];   // Time in ms
+float (*reading_buffer)[3];    // Heat Index, Temperature, Humidity
+int64_t *timestamp_buffer;   // Time in ms
 
 // *.up.railway.app certificate
 // Expires on July 15, 2023
@@ -66,6 +66,8 @@ WiFiMulti WiFiMulti;
 
 void setup() {
   Serial.begin(115200);
+  reading_buffer = malloc(MAX_BUF_SIZE * sizeof(*reading_buffer));
+  timestamp_buffer = malloc(MAX_BUF_SIZE * sizeof(*timestamp_buffer));
 
   WiFi.mode(WIFI_STA);
   WiFiMulti.addAP("AndroidAPC7E8", "1234abcd");
@@ -113,7 +115,7 @@ void send_readings() {
   client->setCACert(root_ca_certificate);
 
   String json = "{ \"readings\": [";
-  char temp[4096];
+  char *temp = malloc(4096);
   for(int i = 0, n = 0; i < buf_counter; i++) {
     n = sprintf(temp + n, "[%lld, %.3f, %.3f, %.3f]%c",
       timestamp_buffer[i], reading_buffer[i][0], reading_buffer[i][1], reading_buffer[i][2], i + 1 == buf_counter ? ']' : ',');
@@ -121,6 +123,7 @@ void send_readings() {
   json += temp;
   json += "}";
   Serial.println(json);
+  free(temp);
 
   {
     HTTPClient https;
