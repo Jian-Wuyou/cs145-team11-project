@@ -3,6 +3,12 @@
 #include <WiFi.h>
 #include <WiFiMulti.h>
 #include <WiFiClientSecure.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define RX_PIN 16
+#define TX_PIN 17
 
 // Configuring the clock
 const char* ntpServer[] = {"1.ph.pool.ntp.org",
@@ -14,7 +20,7 @@ const int   daylightOffset_sec = 0;
 // Configuring webserver connection
 String server = "https://heatwatch.up.railway.app";
 const int MAX_BUF_SIZE = 100;
-const int CLR_BUF_SIZE = 10;              // Clear buffer after it exceeds this threshold
+const int CLR_BUF_SIZE = 2;              // Clear buffer after it exceeds this threshold
 int buf_counter = 0;                      // Send data when buf_counter == MAX_BUF_SIZE
 float (*reading_buffer)[3];    // Heat Index, Temperature, Humidity
 int64_t *timestamp_buffer;   // Time in ms
@@ -66,11 +72,12 @@ WiFiMulti WiFiMulti;
 
 void setup() {
   Serial.begin(115200);
+  Serial2.begin(9600, SERIAL_8N1, RX_PIN, TX_PIN);
   reading_buffer = (float (*)[3]) malloc(MAX_BUF_SIZE * sizeof(*reading_buffer));
   timestamp_buffer = (int64_t*) malloc(MAX_BUF_SIZE * sizeof(*timestamp_buffer));
 
   WiFi.mode(WIFI_STA);
-  WiFiMulti.addAP("AndroidAPC7E8", "1234abcd");
+  WiFiMulti.addAP("Lenovo T450", "jhgfuiyu");
 
   // Connect to WiFi network
   while ((WiFiMulti.run() != WL_CONNECTED)) {
@@ -95,10 +102,19 @@ void get_readings() {
 
   timestamp_buffer[buf_counter] = xx_time_get_time();
 
+  String data = Serial2.readString();
+  data.trim();
+
+  float h, t, hi;
+  sscanf(data.c_str(), "%f %f %f", &h, &t, &hi);
+
+  Serial.println(data);
+  // Serial.println(d);
+
   // TODO: replace with sensor readings
-  reading_buffer[buf_counter][0] = 10;
-  reading_buffer[buf_counter][1] = 12;
-  reading_buffer[buf_counter][2] = 14;
+  reading_buffer[buf_counter][0] = h;
+  reading_buffer[buf_counter][1] = t;
+  reading_buffer[buf_counter][2] = hi;
   buf_counter++;
 
   if(buf_counter >= CLR_BUF_SIZE) {
@@ -112,7 +128,10 @@ void send_readings() {
     Serial.println("Unable to create client");
     return;
   }
-  client->setCACert(root_ca_certificate);
+  client->setInsecure();
+  // client->setCACert(root_ca_certificate);
+
+  
 
   String json = "{ \"readings\": [";
   char *temp = (char*)malloc(4096);
@@ -130,6 +149,7 @@ void send_readings() {
     Serial.print("[HTTPS] begin...\n");
     if(https.begin(*client, server + "/update_db")) {
       Serial.print("[HTTPS] POST...\n");
+      https.addHeader("Content-Type", "application/json");
       int http_code = https.POST(json);
 
       if(http_code > 0) {
