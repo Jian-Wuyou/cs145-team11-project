@@ -66,8 +66,8 @@ WiFiMulti WiFiMulti;
 
 void setup() {
   Serial.begin(115200);
-  reading_buffer = malloc(MAX_BUF_SIZE * sizeof(*reading_buffer));
-  timestamp_buffer = malloc(MAX_BUF_SIZE * sizeof(*timestamp_buffer));
+  reading_buffer = (float (*)[3]) malloc(MAX_BUF_SIZE * sizeof(*reading_buffer));
+  timestamp_buffer = (int64_t*) malloc(MAX_BUF_SIZE * sizeof(*timestamp_buffer));
 
   WiFi.mode(WIFI_STA);
   WiFiMulti.addAP("AndroidAPC7E8", "1234abcd");
@@ -115,7 +115,7 @@ void send_readings() {
   client->setCACert(root_ca_certificate);
 
   String json = "{ \"readings\": [";
-  char *temp = malloc(4096);
+  char *temp = (char*)malloc(4096);
   for(int i = 0, n = 0; i < buf_counter; i++) {
     n = sprintf(temp + n, "[%lld, %.3f, %.3f, %.3f]%c",
       timestamp_buffer[i], reading_buffer[i][0], reading_buffer[i][1], reading_buffer[i][2], i + 1 == buf_counter ? ']' : ',');
