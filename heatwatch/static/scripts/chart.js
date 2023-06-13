@@ -54,7 +54,7 @@ const summaryChart = async function(){
     let cutoff = Date.now() - maxTime_agg; // 7 days ago
 
     // fetch data after lastReading
-    const request = new Request(`${domain}/summary`, {
+    const request = new Request(`/summary`, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json'
@@ -107,7 +107,7 @@ const summaryChart = async function(){
 const updateChart = async function() {
     let cutoff = Date.now() - maxTime * 1E3
     // fetch data after lastReading
-    const request = new Request(`${domain}/readings`, {
+    const request = new Request(`/readings`, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json'
