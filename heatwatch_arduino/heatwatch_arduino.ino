@@ -19,6 +19,46 @@ int buf_counter = 0;                   // Send data when buf_counter == MAX_BUF_
 float reading_buffer[MAX_BUF_SIZE][3]; // Heat Index, Temperature, Humidity
 int64_t timestamp_buffer[MAX_BUF_SIZE];  // Time in ms
 
+// *.up.railway.app certificate
+// Expires on July 15, 2023
+const char* root_ca = "-----BEGIN CERTIFICATE-----\n" \
+  "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\n" \
+  "-----END CERTIFICATE-----\n";
+
+WiFiClientSecure client;
+
 void setup() {
   Serial.begin(115200);
 
