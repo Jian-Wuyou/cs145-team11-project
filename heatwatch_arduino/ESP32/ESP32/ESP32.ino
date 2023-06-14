@@ -5,8 +5,8 @@
 #define RX_PIN 16
 #define TX_PIN 17
 
-const char* ssid = "";       // CHANGE 
-const char* password = "";  // CHANGE
+const char* ssid = "Lenovo T450";       // CHANGE 
+const char* password = "jhgfuiyu";  // CHANGE
 
 WebServer server(80);
 

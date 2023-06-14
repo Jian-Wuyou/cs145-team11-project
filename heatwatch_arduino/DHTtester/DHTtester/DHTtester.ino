@@ -5,7 +5,7 @@
 
 DHT dht(DHTPIN, DHTTYPE);
 
-int boardState = 0;
+int boardState = 1;
 int buttonState = 0;
 int prevButtonState;
 
@@ -15,6 +15,7 @@ void setup() {
   dht.begin();
 
   pinMode(3, INPUT);
+  pinMode(4, OUTPUT);
 }
 
 void loop() {
@@ -29,10 +30,13 @@ void loop() {
   if (boardState == 1){
     readSensor();
   }
+  else{
+    digitalWrite(4, LOW);
+  }
 }
 
 void readSensor(){
-  delay(1000);
+  delay(1500);
 
   float h = dht.readHumidity();
   float t = dht.readTemperature();    
@@ -44,12 +48,22 @@ void readSensor(){
 
   float hi = dht.computeHeatIndex(t, h, false);
 
-  Serial.print(F("Humidity: "));
-  Serial.print(h);
-  Serial.print(F("%  Temperature: "));
-  Serial.print(t);
-  Serial.print(F("°C "));
-  Serial.print(F(" Heat index: "));
-  Serial.print(hi);
-  Serial.print(F("°C\n"));
+  String data = String(h) + " " + String(t) + " " + String(hi);
+
+  Serial.println(data);
+
+  // Serial.print(F("Humidity: "));
+  // Serial.print(h);
+  // Serial.print(F(" Temperature: "));
+  // Serial.print(t);
+  // // Serial.print(F("°C "));
+  // Serial.print(F(" HeatIndex: "));
+  // Serial.print(hi);
+  // Serial.print(F("°C\n"));
+
+  // if(hi >= 25){
+  //   digitalWrite(4, HIGH);
+  // } else{
+  //   digitalWrite(4, LOW);
+  // }
 }
