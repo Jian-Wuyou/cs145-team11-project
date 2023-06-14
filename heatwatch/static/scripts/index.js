@@ -10,6 +10,8 @@ window.onload = async () => {
         chart.render();
     }
 
+    const updateInterval = 1000; // just increase if it's causing lag
+
     const updateReadings = () => {
         readingUpdate = setInterval(async ()=>{
             console.log(`lastreading:${lastReading}`)

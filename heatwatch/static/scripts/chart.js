@@ -1,4 +1,3 @@
-const updateInterval = 1000; // just increase if it's causing lag
 const maxTime = 20; // only keeps readings from the past maxTime seconds
 const maxTime_agg = 604800000; // only keeps readings from the past 7 days
 
@@ -19,7 +18,6 @@ const chart = new CanvasJS.Chart("chart", {
     },
     axisY:{
         minimum: 0,
-        maximum: 80,
         interval: 10
     },
     data: [
