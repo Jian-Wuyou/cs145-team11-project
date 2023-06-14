@@ -2,46 +2,48 @@
 
 ## Setup
 
-First, create the python virtual environment using the `virtualenv` module.
+First, create the python virtual environment using the `virtualenv` module. On Windows, do the following:
 
 ```bash
 pip install virtualenv
 python -m venv venv
-```
-
-In Linux, start the virtual environment by running
-
-```bash
-source ./venv/bin/activate
-```
-
-Or, in Windows, by running
-
-```bash
 .\venv\Scripts\activate
+```
+
+In Linux, do the following:
+
+```bash
+sudo apt-get install python3-venv
+python -m venv venv
+source ./venv/bin/activate
 ```
 
 Next, install the requirements by running either of the following:
 
 ```bash
-sudo apt-get install python3-dev python3.11-dev default-libmysqlclient-dev build-essential # On Linux
-pip install wheel
-pip install flask mysqlclient python-dotenv
+pip install -r requirements.txt
 ```
 
-To run the program in debug mode, execute the following command:
+```bash
+sudo apt-get update
+sudo apt-get install build-essential python3-dev ca-certificates libmariadb-dev gunicorn # On Linux
+pip install flask python-dotenv gunicorn mariadb
+```
+
+To run the program in debug mode, execute either of the following commands (replace $PORT with the port number):
 ```bash
 python -m heatwatch.app
+FLASK_RUN_PORT=$PORT FLASK_RUN_HOST=0.0.0.0 flask --app heatwatch/app --debug run
 ```
 
 To run it in production mode, execute the following
 ```cmd
-FLASK_RUN_PORT=$PORT FLASK_RUN_HOST=0.0.0.0 flask --app heatwatch/app run
+gunicorn --workers=4 --access-logfile - --bind=0.0.0.0:$PORT heatwatch.app:app
 ```
 
 ## Deployment
 
-The webserver is currently being hosted on railway.app, and the database is hosted on planetscale.
+The webserver is currently being hosted on heatwatch.up.railway.app, and the database is hosted on planetscale.
 
 ## API endpoints
 
