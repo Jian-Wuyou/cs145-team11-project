@@ -1,4 +1,4 @@
-const maxTime = 20; // only keeps readings from the past maxTime seconds
+const maxTime = 60; // only keeps readings from the past maxTime seconds
 const maxTime_agg = 604800000; // only keeps readings from the past 7 days
 
 let readings = []; // array of [time, HI, T, RH] tuples
