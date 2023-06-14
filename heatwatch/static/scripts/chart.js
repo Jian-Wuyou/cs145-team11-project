@@ -19,7 +19,7 @@ const chart = new CanvasJS.Chart("chart", {
     },
     axisY:{
         minimum: 0,
-        maximum: 60,
+        maximum: 80,
         interval: 10
     },
     data: [
@@ -29,7 +29,7 @@ const chart = new CanvasJS.Chart("chart", {
             legendText: "Temperature",
             lineColor: "#fbff1d50",
             color: "#fbff1d50",
-            fillOpacity: .3
+            fillOpacity: .4
         },
         {
             type: "spline",
