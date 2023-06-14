@@ -111,10 +111,9 @@ void get_readings() {
   Serial.println(data);
   // Serial.println(d);
 
-  // TODO: replace with sensor readings
-  reading_buffer[buf_counter][0] = h;
+  reading_buffer[buf_counter][0] = hi;
   reading_buffer[buf_counter][1] = t;
-  reading_buffer[buf_counter][2] = hi;
+  reading_buffer[buf_counter][2] = h;
   buf_counter++;
 
   if(buf_counter >= CLR_BUF_SIZE) {
@@ -130,8 +129,6 @@ void send_readings() {
   }
   client->setInsecure();
   // client->setCACert(root_ca_certificate);
-
-  
 
   String json = "{ \"readings\": [";
   char *temp = (char*)malloc(4096);
