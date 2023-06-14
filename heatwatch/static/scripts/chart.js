@@ -27,24 +27,24 @@ const chart = new CanvasJS.Chart("chart", {
             type: "spline",
             showInLegend: true,
             legendText: "Temperature",
-            lineColor: "#fbff1d50",
-            color: "#fbff1d50",
-            fillOpacity: .4
+            // lineColor: "#fbff1d50",
+            // color: "#fbff1d50",
+            // fillOpacity: .4
         },
         {
             type: "spline",
             showInLegend: true,
             legendText:"Humidity",
-            lineColor: "#1db7ff45",
-            color: "#1db7ff45",
-            fillOpacity: .3
+            // lineColor: "#1db7ff45",
+            // color: "#1db7ff45",
+            // fillOpacity: .3
         },
         {
             type: "spline",
             showInLegend: true,
             legendText:"Heat Index",
-            lineColor: "#910000de",
-            color: "#910000de"
+            // lineColor: "#910000de",
+            // color: "#910000de"
         }
     ]
 });
