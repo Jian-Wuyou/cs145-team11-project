@@ -1,6 +1,8 @@
 window.onload = async () => {
     const current = document.getElementById("current");
     const past = document.getElementById("past");
+    const cutoff_span = document.getElementById("cutoff-span");
+    const cutoff = document.getElementById("cutoff");
     let readingUpdate; // timed function
 
     const clearChart = () => {
@@ -19,7 +21,17 @@ window.onload = async () => {
         }, updateInterval);
     }
 
+    cutoff.addEventListener('change', () => {
+        if(cutoff.value != "") {
+            maxTime = cutoff.value;
+        } else {
+            maxTime = 60;
+        }
+        lastReading = Date.now() - maxTime * 1E3;
+    })
+
     current.addEventListener('click', async () => {
+        cutoff_span.style.display = "inline";
         current.classList.add("selected");
         past.classList.remove("selected");
         clearInterval(readingUpdate);
@@ -28,6 +40,7 @@ window.onload = async () => {
     });
 
     past.addEventListener('click', async () => {
+        cutoff_span.style.display = "none";
         past.classList.add("selected");
         current.classList.remove("selected");
         clearInterval(readingUpdate);
