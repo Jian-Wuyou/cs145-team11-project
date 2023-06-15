@@ -28,6 +28,9 @@ window.onload = async () => {
             maxTime = 60;
         }
         lastReading = Date.now() - maxTime * 1E3;
+        clearInterval(readingUpdate);
+        clearChart();
+        updateReadings();
     })
 
     current.addEventListener('click', async () => {
