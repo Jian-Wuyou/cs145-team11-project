@@ -27,9 +27,10 @@ window.onload = async () => {
         } else {
             maxTime = 60;
         }
-        lastReading = Date.now() - maxTime * 1E3;
         clearInterval(readingUpdate);
         clearChart();
+        lastReading = Date.now() - maxTime * 1E3;
+        
         updateReadings();
     })
 
